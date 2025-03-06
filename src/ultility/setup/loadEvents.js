@@ -1,12 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { colors } = require('./colors');
+const { colors } = require('../tools/textFormat');
 
 module.exports = {
-	load(client) {
+	async load(client) {
 		console.log(colors.blue + '[INFO] Loading Command Handlers!' + colors.reset);
 
-		const eventsPath = path.join(__dirname, '../events');
+		const eventsPath = path.join(__dirname, '../../events/client-events');
 		const eventsFolder = fs.readdirSync(eventsPath);
 
 		for (const eventFile of eventsFolder) {

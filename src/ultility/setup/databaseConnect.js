@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { colors } = require('./colors');
+const { colors } = require('../tools/textFormat');
 
 const { MongoClient } = require('mongodb');
 

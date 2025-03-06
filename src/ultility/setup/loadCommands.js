@@ -1,12 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { colors } = require('./colors');
+const { colors } = require('../tools/textFormat');
 
 module.exports = {
-	load(client) {
+	async load(client) {
 		// Adding commands to the client commands collection
 		console.log(colors.blue + '[INFO] Loading Commands!' + colors.reset);
-		const foldersPath = path.join(__dirname, '../commands');
+		const foldersPath = path.join(__dirname, '../../commands');
 		const commandFolders = fs.readdirSync(foldersPath);
 
 		for (const folder of commandFolders) {
