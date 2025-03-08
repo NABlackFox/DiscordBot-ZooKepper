@@ -1,6 +1,4 @@
-function test(param1, param2){
-    console.log(param1);
-    console.log(param2);
-}
+var path = require('path');
 
-test('test1','test2','test3');
+var directories = path.dirname('./scr/commands');
+console.log(directories);

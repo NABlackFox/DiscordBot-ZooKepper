@@ -33,7 +33,7 @@ const player = new Player(client);
 async function setUp() {
 	await register.deploy();
 	await commandLoader.load(client);
-	await eventLoader.load(client);
+	await eventLoader.load(client, player);
 	await player.extractors.loadMulti(DefaultExtractors);
 	await client.login(token);
 }

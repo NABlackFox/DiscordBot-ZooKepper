@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
-const { useMainPlayer } = require('discord-player');
+const { useMainPlayer, QueryType } = require('discord-player');
 
 module.exports = {
 // Define the play command
@@ -62,14 +62,16 @@ module.exports = {
 			// Play the song in the voice channel
 			const result = await player.play(voiceChannel, query, {
 				nodeOptions: {
-					metadata: { channel: interaction.channel }, // Store text channel as metadata on the queue
+				  metadata: { channel: interaction.channel }, // Store text channel as metadata on the queue
 				},
-			});
-
-			// Reply to the user that the song has been added to the queue
-			return interaction.editReply(
+			  });
+		   
+			  // Reply to the user that the song has been added to the queue
+			  return interaction.editReply(
 				`${result.track.title} has been added to the queue!`,
-			);
+			  );
+
+
 		}
 		catch (error) {
 			// Handle any errors that occur
