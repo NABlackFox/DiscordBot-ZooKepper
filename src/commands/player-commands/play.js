@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
-const { useMainPlayer, QueryType } = require('discord-player');
+const { useMainPlayer } = require('discord-player');
 
 module.exports = {
 // Define the play command
@@ -22,7 +22,7 @@ module.exports = {
 		// Get the voice channel of the user and check permissions
 		const voiceChannel = interaction.member.voice.channel;
 
-        await interaction.deferReply();
+		await interaction.deferReply();
 		if (!voiceChannel) {
 			return interaction.editReply(
 				'You need to be in a voice channel to play music!',
@@ -65,7 +65,7 @@ module.exports = {
 				  metadata: { channel: interaction.channel }, // Store text channel as metadata on the queue
 				},
 			  });
-		   
+
 			  // Reply to the user that the song has been added to the queue
 			  return interaction.editReply(
 				`${result.track.title} has been added to the queue!`,
