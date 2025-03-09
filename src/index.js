@@ -1,3 +1,6 @@
+const args = process.argv.slice(2); // Get command-line arguments
+const isGlobal = args.includes('--global-deploy');
+
 // Require for dotenv
 require('dotenv').config();
 
@@ -6,13 +9,14 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const { Player } = require('discord-player');
 const { DefaultExtractors } = require('@discord-player/extractor');
-const { YoutubeiExtractor } = require('discord-player-youtubei')
+const { YoutubeiExtractor } = require('discord-player-youtubei');
 
 const register = require('./ultility/setup/deployCommands');
 const commandLoader = require('./ultility/setup/loadCommands');
 const eventLoader = require('./ultility/setup/loadEvents');
 
 const token = process.env.TOKEN;
+
 
 // Create new client
 const client = new Client ({ intents: [
@@ -31,10 +35,12 @@ client.cooldowns = new Collection;
 
 const player = new Player(client, {
 	skipFFmpeg: false,
+	connectionTimeout: 30000,
 });
 
+
 async function setUp() {
-	await register.deploy();
+	await register.deploy(isGlobal);
 	await commandLoader.load(client);
 	await eventLoader.load(client, player);
 	await player.extractors.loadMulti(DefaultExtractors);

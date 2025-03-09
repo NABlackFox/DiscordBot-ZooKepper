@@ -2,7 +2,8 @@ const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 const { useMainPlayer } = require('discord-player');
 
 module.exports = {
-// Define the play command
+	isPlayer: true,
+	// Define the play command
 	data: new SlashCommandBuilder()
 		.setName('play') // Command name
 		.setDescription('Play a song in a voice channel') // Command description

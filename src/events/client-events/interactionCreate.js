@@ -1,4 +1,5 @@
 const { Events, Collection, MessageFlags } = require('discord.js');
+const { useMainPlayer } = require('discord-player');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -49,7 +50,15 @@ module.exports = {
 			// Delete the timestamp after expried
 			setTimeout(() => timestamps.delete(interaction.user.id), coolDownDuration);
 
-			// Execute the command
+			// if the command belong to the player instance then use the context provider
+			if (command.isPlayer) {
+				const player = useMainPlayer();
+
+				const data = { guild: interaction.guild };
+				player.context.provide(data, () => command.execute(interaction));
+				return;
+			}
+			// Execute normal command
 			await command.execute(interaction);
 		}
 		catch (error) {

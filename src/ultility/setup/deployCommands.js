@@ -4,7 +4,7 @@ const { colors } = require('../tools/textFormat');
 const { REST, Routes } = require('discord.js');
 
 module.exports = {
-	async deploy() {
+	async deploy(isGlobal) {
 		console.log(colors.blue + '[INFO] Deploy Commands!' + colors.reset);
 
 		const clientId = process.env.CLIENT_ID;
@@ -41,8 +41,17 @@ module.exports = {
 
 		// Deploy commands
 		try {
-			console.log(`Started refreshing ${commands.length} application (/) commands.`);
+			if (isGlobal) {
+				console.log('DEPLOY COMMANDS TO ALL GUILDS');
+				console.log(`Started refreshing ${commands.length} application (/) commands.`);
+				// The put method use to register the slash commands to the server
+				const data = await rest.put(Routes.applicationCommands(clientId), { body: commands });
+				console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+				console.log(colors.blue + '[INFO] Deploy Commands Finished!' + colors.reset);
+				return;
+			}
 
+			console.log(`Started refreshing ${commands.length} application (/) commands.`);
 			// The put method use to register the slash commands to the server
 			const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
 			console.log(`Successfully reloaded ${data.length} application (/) commands.`);
