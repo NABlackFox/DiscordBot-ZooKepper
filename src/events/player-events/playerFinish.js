@@ -1,5 +1,6 @@
 const { GuildQueueEvent } = require('discord-player');
 const { EmbedBuilder } = require('discord.js');
+const { hexColors } = require('../../ultility/tools/hexColors');
 
 module.exports = {
 	name: GuildQueueEvent.PlayerFinish,
@@ -9,7 +10,7 @@ module.exports = {
 
 		const trackMap = upcomingTrack.map((track, index) => `${index + 1}. ${track.title} - ${track.author} - ${track.duration}`)
 		const embed = new EmbedBuilder()
-			.setColor(0xFF0000)
+			.setColor(hexColors.red)
 			.setTitle('⏹ Track Finished')
 			.setDescription(`The track **${track.title}** has finished playing.`)
 			.setThumbnail(track.thumbnail)

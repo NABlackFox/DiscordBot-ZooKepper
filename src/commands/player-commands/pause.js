@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useTimeline, useQueue } = require('discord-player');
+const { hexColors } = require('../../ultility/tools/hexColors');
 
 module.exports = {
 	isPlayer: true,
@@ -13,7 +14,7 @@ module.exports = {
 		const timeline = useTimeline();
 
 		if (!timeline) {
-			const embed = new EmbedBuilder().setColor(0xFFFF00).setTitle('Queue Info').setDescription('The server does not have active player!');
+			const embed = new EmbedBuilder().setColor(hexColors.gold).setTitle('Queue Info').setDescription('The server does not have active player!');
 			return interaction.reply({ embeds: [embed] });
 		}
 
@@ -27,7 +28,7 @@ module.exports = {
 
 		// send the message
 		const embed = new EmbedBuilder()
-			.setColor(0xFFFF00)
+			.setColor(hexColors.gold)
 			.setTitle('Queue Info')
 			.setThumbnail(currentTrack.thumbnail)
 			.addFields(

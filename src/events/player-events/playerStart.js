@@ -1,5 +1,6 @@
 const { GuildQueueEvent } = require('discord-player');
 const { EmbedBuilder } = require('discord.js');
+const { hexColors } = require('../../ultility/tools/hexColors');
 
 module.exports = {
 	name: GuildQueueEvent.PlayerStart,
@@ -7,7 +8,7 @@ module.exports = {
 		const { channel } = queue.metadata;
 
 		const embed = new EmbedBuilder()
-			.setColor(0x0099FF)
+			.setColor(hexColors.lightBlue)
 			.setTitle(`🎶 Now Playing: ${track.title}`)
 			.setURL(track.url)
 			.setAuthor({ name: track.author, iconURL: track.thumbnail })

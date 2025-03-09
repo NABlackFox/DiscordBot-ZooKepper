@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
+const { hexColors } = require('../../ultility/tools/hexColors');
 
 module.exports = {
 	isPlayer: true,
@@ -13,7 +14,7 @@ module.exports = {
 		const queue = useQueue();
 
 		if (!queue) {
-			const embed = new EmbedBuilder().setColor(0xFFFF00).setTitle('Queue Info').setDescription('The server does not have active player!');
+			const embed = new EmbedBuilder().setColor(hexColors.gold).setTitle('Queue Info').setDescription('The server does not have active player!');
 			return interaction.reply({ embeds: [embed] });
 		}
 
@@ -22,13 +23,13 @@ module.exports = {
 
 		// If there is no track
 		if (!currentTrack) {
-			const embed = new EmbedBuilder().setColor(0xFFFF00).setTitle('Queue Info').setDescription('No track in the queue');
+			const embed = new EmbedBuilder().setColor(hexColors.gold).setTitle('Queue Info').setDescription('No track in the queue');
 			return interaction.reply({ embeds: [embed] });
 		}
 
 		// return the current playing track information
 		const embed = new EmbedBuilder()
-			.setColor(0xFFFF00)
+			.setColor(hexColors.gold)
 			.setTitle('Queue Info')
 			.setThumbnail(currentTrack.thumbnail)
 			.addFields(
