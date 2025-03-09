@@ -30,7 +30,6 @@ module.exports = {
 		const embed = new EmbedBuilder()
 			.setColor(hexColors.red)
 			.setTitle('⏹ Music Stopped')
-			.setThumbnail('https://i.imgur.com/O3DHIA5.png') // Optional: Add a stopping-related icon
 			.setDescription('The player has been **stopped** and the queue has been **cleared**.')
 			.addFields(
 				{ name: '🎶 Queue Status', value: 'All tracks have been removed.', inline: false },
