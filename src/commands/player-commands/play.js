@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField, MessageFlags } = require('discord.js');
 const { useMainPlayer } = require('discord-player');
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
 		// Get the voice channel of the user and check permissions
 		const voiceChannel = interaction.member.voice.channel;
 
-		await interaction.deferReply();
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 		if (!voiceChannel) {
 			return interaction.editReply(
 				'You need to be in a voice channel to play music!',
