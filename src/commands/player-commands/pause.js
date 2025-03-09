@@ -13,7 +13,7 @@ module.exports = {
 		const timeline = useTimeline();
 
 		if (!timeline) {
-			const embed = new EmbedBuilder().setColor(0xFF0000).setTitle('Queue Info').setDescription('The server does not have active player!');
+			const embed = new EmbedBuilder().setColor(0xFFFF00).setTitle('Queue Info').setDescription('The server does not have active player!');
 			return interaction.reply({ embeds: [embed] });
 		}
 
@@ -27,7 +27,7 @@ module.exports = {
 
 		// send the message
 		const embed = new EmbedBuilder()
-			.setColor(0xFF0000)
+			.setColor(0xFFFF00)
 			.setTitle('Queue Info')
 			.setThumbnail(currentTrack.thumbnail)
 			.addFields(
