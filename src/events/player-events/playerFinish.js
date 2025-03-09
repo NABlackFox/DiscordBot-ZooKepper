@@ -9,19 +9,20 @@ module.exports = {
 		const upcomingTrack = queue.tracks.data.slice(0, 5);
 		const totalTracks = queue.tracks.data.length;
 
-		const trackMap = upcomingTrack.map((track, index) => `${index + 1}. ${track.title} - ${track.author} - ${track.duration}`)
+		// eslint-disable-next-line no-shadow
+		const trackMap = upcomingTrack.map((track, index) => `${index + 1}. ${track.title} - ${track.author} - ${track.duration}`);
 		const embed = new EmbedBuilder()
 			.setColor(hexColors.red)
 			.setTitle('⏹ Track Finished')
 			.setDescription(`The track **${track.title}** has finished playing.`)
 			.setThumbnail(track.thumbnail)
 			.addFields(
-				{ name: '🎶 Next Tracks: ', value: trackMap.length > 0 
-					? trackMap.join('\n') + (totalTracks > 5 ? `\n\n${totalTracks - 5}+ more tracks` : '') 
-					: 'No upcoming tracks.', 
-				inline: true
-				}
-			)
+				{ name: '🎶 Next Tracks: ', value: trackMap.length > 0
+					? trackMap.join('\n') + (totalTracks > 5 ? `\n\n${totalTracks - 5}+ more tracks` : '')
+					: 'No upcoming tracks.',
+				inline: true,
+				},
+			);
 
 		await channel.send({ embeds: [embed] });
 	},
