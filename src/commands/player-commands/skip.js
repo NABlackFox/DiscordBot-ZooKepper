@@ -7,9 +7,10 @@ module.exports = {
 	// Define the play command
 	data: new SlashCommandBuilder()
 		.setName('skip') // Command name
-		.setDescription('Skip the current song'),
+		.setDescription('Skip the current song')
+        .addIntegerOption(option => option.setName('amount').setDescription('amount of tracks want to skip').setMinValue(1)),
 
-	execute(interaction) {
+	async execute(interaction) {
 		// Get the queue
         const queue = useQueue();
 
@@ -23,9 +24,24 @@ module.exports = {
 			return interaction.reply({ embeds: [embed] });
 		}
 
+        // Get the number of songs to skip (default to 1 if not specified)
+        const skipAmount = interaction.options.getInteger('amount') || 1;
+        const queueSize = queue.tracks.data.length;
+
+        // Prevent skipping more than available tracks
+        if (skipAmount > queueSize) {
+            const embed = new EmbedBuilder()
+                .setColor(hexColors.red)
+                .setTitle('Queue Info')
+                .setDescription(`❌ You cannot skip more than ${queueSize} songs!`);
+            return interaction.reply({ embeds: [embed] });
+        }
+
+        const skipToTrack = queue.tracks.data[skipAmount];
 		// skip the track
         const currentTrack = useQueue().currentTrack;
-        queue.node.skip();
+        
+        queue.node.skipTo(skipToTrack);
 
 		// send the message
 		const embed = new EmbedBuilder()
@@ -33,7 +49,7 @@ module.exports = {
 			.setTitle('Queue Info')
 			.setThumbnail(currentTrack.thumbnail)
 			.addFields(
-				{ name: '⏯ Skipping: ', value: currentTrack.title, inline: true },
+				{ name: `⏯ Skipping: ${skipAmount} tracks`, value: `${currentTrack.title} ➡️ ${skipToTrack.title} `, inline: true },
 			);
 
 		interaction.reply({ embeds: [embed] });

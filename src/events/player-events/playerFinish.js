@@ -7,6 +7,7 @@ module.exports = {
 	async execute(queue, track) {
 		const { channel } = queue.metadata;
 		const upcomingTrack = queue.tracks.data.slice(0, 5);
+		const totalTracks = queue.tracks.data.length;
 
 		const trackMap = upcomingTrack.map((track, index) => `${index + 1}. ${track.title} - ${track.author} - ${track.duration}`)
 		const embed = new EmbedBuilder()
@@ -15,9 +16,12 @@ module.exports = {
 			.setDescription(`The track **${track.title}** has finished playing.`)
 			.setThumbnail(track.thumbnail)
 			.addFields(
-				{ name: '🎶 Next Tracks: ', value: trackMap.join('\n') || 'No upcoming tracks.', inline: true },
+				{ name: '🎶 Next Tracks: ', value: trackMap.length > 0 
+					? trackMap.join('\n') + (totalTracks > 5 ? `\n\n${totalTracks - 5}+ more tracks` : '') 
+					: 'No upcoming tracks.', 
+				inline: true
+				}
 			)
-			.setFooter({ text: 'Queueing up the next song... 🎶' });
 
 		await channel.send({ embeds: [embed] });
 	},
