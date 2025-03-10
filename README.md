@@ -25,6 +25,15 @@ If you prefer a **stable version**, download the latest **release build** from:
 
 <!-- #### 🔗 [**Latest Release**](https://github.com/NABlackFox/DiscordBot-ZooKepper/releases/latest)   -->
 
+### ⚙️ Configure Environment Variables 
+
+Create ".env" file in the root folder and adding the following varriable:
+``` js
+TOKEN = YourBotToken
+CLIENT_ID = YourBotID
+GUILD_ID = YourServerID 
+```
+
 ### ▶️ Run the bot
 After dowload and install the bot time to run it
 ```bash
@@ -48,14 +57,6 @@ npm run product # not recommend
 nodemon ./src/index.js --global-deploy # not recommend
 ```
 ---
-## ⚙️ Configure Environment Variables 
-
-Create ".env" file in the root folder and adding the following varriable:
-``` js
-TOKEN = YourBotToken
-CLIENT_ID = YourBotID
-GUILD_ID = YourServerID 
-```
 ## 📜Commands
 ### 🎵 Music Commands 
 
