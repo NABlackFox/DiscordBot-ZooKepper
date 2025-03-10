@@ -8,7 +8,7 @@ module.exports = {
 		const { channel, finishEvent } = queue.metadata;
 
 		// Return if the flags is not raised
-		if (!finishEvent){
+		if (!finishEvent) {
 			return;
 		}
 		const upcomingTrack = queue.tracks.data.slice(0, 5);

@@ -27,7 +27,7 @@ module.exports = {
 		queue.metadata = {
 			...queue.metadata,
 			finishEvent: false,
-		}
+		};
 		// stop the player
 		queue.node.stop(true);
 

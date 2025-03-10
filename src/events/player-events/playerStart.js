@@ -8,11 +8,11 @@ module.exports = {
 		const { channel, finishEvent } = queue.metadata;
 
 		// If the flags not raised then raised the flags
-		if (!finishEvent){
+		if (!finishEvent) {
 			queue.metadata = {
 				...queue.metadata,
-				finishEvent: true
-			}
+				finishEvent: true,
+			};
 		}
 		const embed = new EmbedBuilder()
 			.setColor(hexColors.lightBlue)
