@@ -5,8 +5,15 @@ const { hexColors } = require('../../ultility/tools/hexColors');
 module.exports = {
 	name: GuildQueueEvent.PlayerStart,
 	async execute(queue, track) {
-		const { channel } = queue.metadata;
+		const { channel, finishEvent } = queue.metadata;
 
+		// If the flags not raised then raised the flags
+		if (!finishEvent){
+			queue.metadata = {
+				...queue.metadata,
+				finishEvent: true
+			}
+		}
 		const embed = new EmbedBuilder()
 			.setColor(hexColors.lightBlue)
 			.setTitle(`🎶 Now Playing: ${track.title}`)

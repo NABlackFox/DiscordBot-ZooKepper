@@ -64,6 +64,7 @@ module.exports = {
 			const result = await player.play(voiceChannel, query, {
 				nodeOptions: {
 				  metadata: { channel: interaction.channel }, // Store text channel as metadata on the queue
+				  finishEvent: true, // indicator that allow finish event to emit
 				},
 			  });
 

@@ -5,7 +5,12 @@ const { hexColors } = require('../../ultility/tools/hexColors');
 module.exports = {
 	name: GuildQueueEvent.PlayerFinish,
 	async execute(queue, track) {
-		const { channel } = queue.metadata;
+		const { channel, finishEvent } = queue.metadata;
+
+		// Return if the flags is not raised
+		if (!finishEvent){
+			return;
+		}
 		const upcomingTrack = queue.tracks.data.slice(0, 5);
 		const totalTracks = queue.tracks.data.length;
 

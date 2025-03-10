@@ -40,6 +40,12 @@ module.exports = {
 		const skipToTrack = queue.tracks.data[skipAmount];
 		// skip the track
 		const currentTrack = useQueue().currentTrack;
+		
+		// Set the flags to prevent finish event to emit
+		queue.metadata = {
+			...queue.metadata,
+			finishEvent: false,
+		}
 
 		queue.node.skipTo(skipToTrack);
 

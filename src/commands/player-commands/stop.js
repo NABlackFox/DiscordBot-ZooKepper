@@ -23,6 +23,11 @@ module.exports = {
 			return interaction.reply({ embeds: [embed] });
 		}
 
+		// Set the flags to prevent finish event to emit
+		queue.metadata = {
+			...queue.metadata,
+			finishEvent: false,
+		}
 		// stop the player
 		queue.node.stop(true);
 
