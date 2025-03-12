@@ -8,7 +8,6 @@ require('dotenv').config();
 
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const { Player } = require('discord-player');
-const { DefaultExtractors } = require('@discord-player/extractor');
 const { YoutubeiExtractor } = require('discord-player-youtubei');
 
 const register = require('./ultility/setup/deployCommands');
@@ -43,7 +42,6 @@ async function setUp() {
 	await register.deploy(isGlobal);
 	await commandLoader.load(client);
 	await eventLoader.load(client, player);
-	await player.extractors.loadMulti(DefaultExtractors);
 	await player.extractors.register(YoutubeiExtractor);
 	await client.login(token);
 }
