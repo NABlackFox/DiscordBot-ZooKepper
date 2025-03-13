@@ -21,7 +21,7 @@ git clone -b development https://github.com/NABlackFox/DiscordBot-ZooKepper.git
 cd DiscordBot-ZooKepper
 ```
 ### 📥 Download the latest release  
-If you prefer a **stable version**, download the latest **release build** from:  
+If you prefer a **stable version**, clone the `main` branch of the project
 
 <!-- #### 🔗 [**Latest Release**](https://github.com/NABlackFox/DiscordBot-ZooKepper/releases/latest)   -->
 
@@ -64,6 +64,7 @@ nodemon ./src/index.js --global-deploy # not recommend
 |--------------|--------------------------|-------------|
 | `/play`      | `<song>`                  | Plays a song in a voice channel. |
 | `/pause`     | N/A                        | Pauses the currently playing song or resume if the sonng is paused. |
+| `/queue`      | N/A                        | Display the queue inforamtion. |
 | `/skip`  | [`skip-options`](#skip-options) | Skips the current song. |
 | `/stop`      | N/A                        | Stops the music and clears the queue. |
 
