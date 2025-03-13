@@ -36,11 +36,15 @@ module.exports = {
 
 			const trackMap = upcomingTrack.map((track, index) => `${index + 1}. ${track.title} - ${track.author} - ${track.duration}`);
 
-
+			// Pretty sure I will forget how this work since am cooking this shit when am high so here is the explaination :))
+			// The reduce in the first reduce, exam: "4:30" => "4", "30" => [4:30] then do the reduce like normal
+			// The second work in the same way but the initial value is not set to 0 so it will take take the first value in
+			// array to calculate
+			// The queue is missing the current playing track so need to add one more to make sure it display correct
 			const totalQueueDurationSeconds = queue.tracks.data.reduce((acc, t) => {
 				const [min, sec] = t.duration.split(':').map(Number);
 				return acc + (min * 60 + sec);
-			}, 0);
+			}, 0) + currentTrack.duration.split(':').map(Number).reduce((m, s) => m * 60 + s);
 
 			queueDuration = formatTime(totalQueueDurationSeconds);
 
@@ -48,7 +52,7 @@ module.exports = {
 				.setColor(hexColors.gold)
 				.setTitle('Queue Info')
 				.addFields(
-					{ name: `🎶 Now Playing:`, value: `${currentTrack.title}` },
+					{ name: '🎶 Now Playing:', value: `${currentTrack.title}` },
 					{ name: '⏳ Duration', value: currentTrack.duration, inline: false }, // Unique line
 					{ name: '📜 Total Tracks', value: `${totalTracks + 1}`, inline: true },
 					{ name: '⏳ Total Queue Duration', value: queueDuration, inline: true }, // Same line as Total Tracks

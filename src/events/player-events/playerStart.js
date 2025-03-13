@@ -1,7 +1,7 @@
 const { GuildQueueEvent } = require('discord-player');
 const { EmbedBuilder } = require('discord.js');
 const { hexColors } = require('../../ultility/tools/hexColors');
-const { formatTime } = require('../../ultility/tools/timeFormat');
+
 module.exports = {
 	name: GuildQueueEvent.PlayerStart,
 	async execute(queue, track) {

@@ -1,0 +1,1 @@
+queue is display the total duration wrong
