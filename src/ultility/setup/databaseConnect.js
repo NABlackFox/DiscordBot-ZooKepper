@@ -4,7 +4,7 @@ const { colors } = require('../tools/textFormat');
 const { MongoClient } = require('mongodb');
 
 module.exports = {
-	connect() {
+	async connect() {
 		// Connect to database
 		(async () => {
 			try {

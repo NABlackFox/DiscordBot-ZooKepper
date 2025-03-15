@@ -13,6 +13,7 @@ const { YoutubeiExtractor } = require('discord-player-youtubei');
 const register = require('./ultility/setup/deployCommands');
 const commandLoader = require('./ultility/setup/loadCommands');
 const eventLoader = require('./ultility/setup/loadEvents');
+const database = require('./ultility/setup/databaseConnect');
 
 const token = process.env.TOKEN;
 
@@ -43,6 +44,7 @@ async function setUp() {
 	await commandLoader.load(client);
 	await eventLoader.load(client, player);
 	await player.extractors.register(YoutubeiExtractor);
+	await database.connect();
 	await client.login(token);
 }
 
