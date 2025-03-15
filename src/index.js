@@ -44,7 +44,6 @@ async function setUp() {
 	await eventLoader.load(client, player);
 	await player.extractors.register(YoutubeiExtractor);
 	mongoClinet = await database.connect();
-	test = await database.connect();
 	await client.login(token);
 }
 
