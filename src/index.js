@@ -38,13 +38,13 @@ const player = new Player(client, {
 	connectionTimeout: 30000,
 });
 
-
 async function setUp() {
 	await register.deploy(isGlobal);
 	await commandLoader.load(client);
 	await eventLoader.load(client, player);
 	await player.extractors.register(YoutubeiExtractor);
-	await database.connect();
+	mongoClinet = await database.connect();
+	test = await database.connect();
 	await client.login(token);
 }
 
