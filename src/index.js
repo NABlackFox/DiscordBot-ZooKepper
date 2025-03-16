@@ -1,50 +1,48 @@
 const args = process.argv.slice(2); // Get command-line arguments
-const isGlobal = args.includes('--global-deploy');
+const isGlobal = args.includes("--global-deploy");
 
 // Require for dotenv
-require('dotenv').config();
+const { config } = require("dotenv");
+config();
 
 // Require necessary discord.js classes
 
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const { Player } = require('discord-player');
-const { YoutubeiExtractor } = require('discord-player-youtubei');
+const { Client, GatewayIntentBits, Collection } = require("discord.js");
+const { Player } = require("discord-player");
+const { YoutubeiExtractor } = require("discord-player-youtubei");
 
-const register = require('./ultility/setup/deployCommands');
-const commandLoader = require('./ultility/setup/loadCommands');
-const eventLoader = require('./ultility/setup/loadEvents');
-const database = require('./ultility/setup/databaseConnect');
+const register = require("./ultility/setup/deployCommands");
+const commandLoader = require("./ultility/setup/loadCommands");
+const eventLoader = require("./ultility/setup/loadEvents");
+const database = require("./ultility/setup/databaseConnect");
 
-const token = process.env.TOKEN;
-
+token = process.env.TOKEN;
 
 // Create new client
-const client = new Client ({ intents: [
-	GatewayIntentBits.Guilds,
-	GatewayIntentBits.GuildVoiceStates,
-],
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 // Create client command
-client.commands = new Collection;
+client.commands = new Collection();
 
 // Create client coolsdown
 // Structure of the cooldowns: <key(command name) - value(A: Collection)>
 // A's Structure: <key(user ID) - value(timestap when invoke the command)>
-client.cooldowns = new Collection;
+client.cooldowns = new Collection();
 
 const player = new Player(client, {
-	skipFFmpeg: false,
-	connectionTimeout: 30000,
+  skipFFmpeg: false,
+  connectionTimeout: 30000,
 });
 
 async function setUp() {
-	await register.deploy(isGlobal);
-	await commandLoader.load(client);
-	await eventLoader.load(client, player);
-	await player.extractors.register(YoutubeiExtractor);
-	mongoClinet = await database.connect();
-	await client.login(token);
+  await register.deploy(isGlobal);
+  await commandLoader.load(client);
+  await eventLoader.load(client, player);
+  await player.extractors.register(YoutubeiExtractor);
+  // mongoClinet = await database.connect();
+  await client.login(token);
 }
 
 setUp();

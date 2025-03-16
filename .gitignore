@@ -2,6 +2,7 @@ node_modules
 .env
 config.json
 Demo
+.vscode
 
 # Demo commands dont push
 test.js
