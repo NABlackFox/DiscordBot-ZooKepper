@@ -23,6 +23,8 @@ module.exports = {
     const memberid = interaction.member.user.id;
     const memberName = interaction.member.user.globalName;
 
+    const voiceChannel = interaction.member.voice.channel;
+
     let votedMemberId = votedMembersCollection.get(interaction.guildId);
     if (!votedMemberId) {
       votedMembersCollection.set(interaction.guildId, new Set());
@@ -36,6 +38,19 @@ module.exports = {
     votedMemberId.add(memberid);
 
     totalVoteCount = votedMemberId.size;
+
+    if (!voiceChannel) {
+      return interaction.editReply(
+        "You need to be in a voice channel to play music!"
+      );
+    }
+
+    if (
+      interaction.guild.members.me.voice.channel &&
+      interaction.guild.members.me.voice.channel !== voiceChannel
+    ) {
+      return interaction.editReply("Can't skip someone else's song!");
+    }
 
     if (!queue) {
       const embed = new EmbedBuilder()
