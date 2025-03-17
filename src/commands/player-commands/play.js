@@ -26,8 +26,6 @@ module.exports = {
 
     // Get the member's id and name that played the song
     const memberName = interaction.member.user.globalName;
-    const memberid = interaction.member.user.id;
-    const voteCount = 0;
     // Get the voice channel of the user and check permissions
     const voiceChannel = interaction.member.voice.channel;
 
@@ -74,8 +72,6 @@ module.exports = {
           metadata: {
             channel: interaction.channel,
             memberName: memberName,
-            memberid: memberid,
-            voteCount: voteCount,
           }, // Store text channel as metadata on the queue
           finishEvent: true, // indicator that allow finish event to emit
         },

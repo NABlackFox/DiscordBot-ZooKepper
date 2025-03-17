@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, Collection } = require("discord.js");
 const { useQueue } = require("discord-player");
 const { hexColors } = require("../../ultility/tools/hexColors");
+
+let votedMembersCollection = new Collection();
 
 module.exports = {
   isPlayer: true,
@@ -13,29 +15,27 @@ module.exports = {
     // Get the queue
     const queue = useQueue();
 
-    const minVoteCount = interaction.member.voice.channel.members.size;
+    // Only half need to agree
+    const minVoteCount = Math.ceil(
+      interaction.member.voice.channel.members.size / 2
+    );
 
-    const skipToTrack = queue.tracks.data[0];
-    const currentTrack = useQueue().currentTrack;
-    const queueSize = queue.tracks.data.length;
+    const memberid = interaction.member.user.id;
+    const memberName = interaction.member.user.globalName;
 
-    const { memberid, voteCount } = queue.metadata;
-
-    function displayEmbeddedMessage() {
-      const embed = new EmbedBuilder()
-        .setColor(hexColors.gold)
-        .setTitle("Queue Info")
-        .setThumbnail(currentTrack.thumbnail)
-        .addFields({
-          name: `⏯ Skipping: ${currentTrack.title}`,
-          value: `${currentTrack.title} ➡️ ${
-            skipToTrack ? skipToTrack.title : "End of track"
-          }`,
-          inline: true,
-        });
-
-      interaction.reply({ embeds: [embed] });
+    let votedMemberId = votedMembersCollection.get(interaction.guildId);
+    if (!votedMemberId) {
+      votedMembersCollection.set(interaction.guildId, new Set());
+      votedMemberId = votedMembersCollection.get(interaction.guildId);
     }
+
+    if (votedMemberId.has(memberid)) {
+      return interaction.reply("You already voted!");
+    }
+
+    votedMemberId.add(memberid);
+
+    totalVoteCount = votedMemberId.size;
 
     if (!queue) {
       const embed = new EmbedBuilder()
@@ -53,7 +53,28 @@ module.exports = {
       return interaction.reply({ embeds: [embed] });
     }
 
-    // Can't skip last song
+    const skipToTrack = queue.tracks.data[0];
+    const currentTrack = queue.currentTrack;
+    const queueSize = queue.tracks.data.length;
+
+    const embed = new EmbedBuilder()
+      .setColor(hexColors.gold)
+      .setTitle("Queue Info")
+      .setThumbnail(currentTrack.thumbnail)
+      .addFields({
+        name: `⏯ Skipping: ${currentTrack.title}`,
+        value: `${currentTrack.title} ➡️ ${
+          skipToTrack ? skipToTrack.title : "End of track"
+        }`,
+        name: "Voted started by",
+        value: `${memberName}`,
+        value: `${totalVoteCount} out of ${minVoteCount}`,
+        inline: true,
+      });
+
+    interaction.reply({ embeds: [embed] });
+
+    // // Can't skip last song
     if (queueSize == 1) {
       const embed = new EmbedBuilder()
         .setColor(hexColors.gold)
@@ -66,42 +87,15 @@ module.exports = {
       return interaction.reply({ embeds: [embed] });
     }
 
-    // If the owner of the song use the skip command
-    // it will force skip
-    if (memberid == interaction.member.user.id) {
-      queue.metadata = {
-        ...queue.metadata,
-        finishEvent: false,
-      };
-      queue.node.skip();
-      displayEmbeddedMessage();
-      return;
-    }
-
-    // Set the flags to prevent finish event to emit
+    // // Set the flags to prevent finish event to emit
     queue.metadata = {
       ...queue.metadata,
       finishEvent: false,
-      voteCount: voteCount + 1,
     };
 
-    const embed = new EmbedBuilder()
-      .setColor(hexColors.gold)
-      .setTitle("Vote skip started")
-      .setAuthor({
-        name: `${interaction.member.user.globalName} wants to skip`,
-      })
-      .addFields({
-        name: `⏯ Skipping: ${currentTrack.title}`,
-        value: `${voteCount} out of ${minVoteCount}`,
-        inline: true,
-      });
-
-    interaction.reply({ embeds: [embed] });
-
-    if (voteCount == minVoteCount) {
+    if (totalVoteCount == minVoteCount) {
       queue.node.skip();
-      displayEmbeddedMessage();
+      votedMemberId.clear();
     }
   },
 };
