@@ -24,8 +24,10 @@ module.exports = {
     const player = useMainPlayer();
     const query = interaction.options.getString("song", true);
 
-    const memberid = interaction.member.user.globalName;
-
+    // Get the member's id and name that played the song
+    const memberName = interaction.member.user.globalName;
+    const memberid = interaction.member.user.id;
+    const voteCount = 0;
     // Get the voice channel of the user and check permissions
     const voiceChannel = interaction.member.voice.channel;
 
@@ -69,7 +71,12 @@ module.exports = {
       // Play the song in the voice channel
       const result = await player.play(voiceChannel, query, {
         nodeOptions: {
-          metadata: { channel: interaction.channel, memberid: memberid }, // Store text channel as metadata on the queue
+          metadata: {
+            channel: interaction.channel,
+            memberName: memberName,
+            memberid: memberid,
+            voteCount: voteCount,
+          }, // Store text channel as metadata on the queue
           finishEvent: true, // indicator that allow finish event to emit
         },
       });
