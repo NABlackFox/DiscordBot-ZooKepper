@@ -1,116 +1,143 @@
-const { SlashCommandBuilder, EmbedBuilder, Collection } = require("discord.js");
-const { useQueue } = require("discord-player");
-const { hexColors } = require("../../ultility/tools/hexColors");
+const { SlashCommandBuilder, EmbedBuilder, Collection, MessageFlags } = require('discord.js');
+const { useQueue } = require('discord-player');
+const { hexColors } = require('../../ultility/tools/hexColors');
 
-let votedMembersCollection = new Collection();
+const votedMembersCollection = new Collection();
 
 module.exports = {
-  isPlayer: true,
-  // Define the play command
-  data: new SlashCommandBuilder()
-    .setName("voteskip") // Command name
-    .setDescription("Skip the current song"),
+	isPlayer: true,
+	// Define the play command
+	data: new SlashCommandBuilder()
+		.setName('voteskip') // Command name
+		.setDescription('Skip the current song'),
 
-  async execute(interaction) {
-    // Get the queue
-    const queue = useQueue();
+	async execute(interaction) {
+		const voiceChannel = interaction.member.voice.channel;
 
-    // Only half need to agree
-    const minVoteCount = Math.ceil(
-      interaction.member.voice.channel.members.size / 2
-    );
+		// If not in voice channel
+		if (!voiceChannel) {
+			return interaction.reply({ content: 'You need to be in a voice channel to skip!', flags: MessageFlags.Ephemeral });
+		}
 
-    const memberid = interaction.member.user.id;
-    const memberName = interaction.member.user.globalName;
+		// If not in the same voice channel as bot
+		if (interaction.guild.members.me.voice.channel &&
+        interaction.guild.members.me.voice.channel !== voiceChannel) {
+			return interaction.reply({ content: 'You need to be in the current playing voice channel to skip!', flags: MessageFlags.Ephemeral });
+		}
 
-    const voiceChannel = interaction.member.voice.channel;
+		const queue = useQueue();
 
-    let votedMemberId = votedMembersCollection.get(interaction.guildId);
-    if (!votedMemberId) {
-      votedMembersCollection.set(interaction.guildId, new Set());
-      votedMemberId = votedMembersCollection.get(interaction.guildId);
-    }
+		// If there is no active section
+		if (!queue) {
+			const embed = new EmbedBuilder()
+				.setColor(hexColors.gold)
+				.setTitle('Queue Info')
+				.setDescription('The server does not have active player!');
+			return interaction.reply({ embeds: [embed] });
+		}
 
-    if (votedMemberId.has(memberid)) {
-      return interaction.reply("You already voted!");
-    }
+		// If the queue is empty
+		if (!queue.isPlaying()) {
+			const embed = new EmbedBuilder()
+				.setColor(hexColors.gold)
+				.setTitle('Queue Info')
+				.setDescription('There is no playing track!');
+			return interaction.reply({ embeds: [embed] });
+		}
 
-    votedMemberId.add(memberid);
+		// Get minimum vote so skip
+		const minVoteCount = Math.ceil(
+			interaction.member.voice.channel.members.size / 2,
+		);
 
-    totalVoteCount = votedMemberId.size;
+		const memberid = interaction.member.user.id;
+		const memberName = interaction.member.user.globalName;
 
-    if (!voiceChannel) {
-      return interaction.editReply(
-        "You need to be in a voice channel to play music!"
-      );
-    }
+		let votedMemberIds = votedMembersCollection.get(interaction.guildId);
 
-    if (
-      interaction.guild.members.me.voice.channel &&
-      interaction.guild.members.me.voice.channel !== voiceChannel
-    ) {
-      return interaction.editReply("Can't skip someone else's song!");
-    }
+		// If there is no set of voted member ids for current guild
+		if (!votedMemberIds) {
+			votedMembersCollection.set(interaction.guildId, new Set());
+			votedMemberIds = votedMembersCollection.get(interaction.guildId);
+		}
 
-    if (!queue) {
-      const embed = new EmbedBuilder()
-        .setColor(hexColors.gold)
-        .setTitle("Queue Info")
-        .setDescription("The server does not have active player!");
-      return interaction.reply({ embeds: [embed] });
-    }
+		// If the member is already voted
+		if (votedMemberIds.has(memberid)) {
+			return interaction.reply({ content: 'You already voted!', flags: MessageFlags.Ephemeral });
+		}
 
-    if (!queue.isPlaying()) {
-      const embed = new EmbedBuilder()
-        .setColor(hexColors.gold)
-        .setTitle("Queue Info")
-        .setDescription("There is no playing track!");
-      return interaction.reply({ embeds: [embed] });
-    }
+		// Add the member id to the set
+		votedMemberIds.add(memberid);
 
-    const skipToTrack = queue.tracks.data[0];
-    const currentTrack = queue.currentTrack;
-    const queueSize = queue.tracks.data.length;
+		// Get the current vote
+		totalVoteCount = votedMemberIds.size;
 
-    const embed = new EmbedBuilder()
-      .setColor(hexColors.gold)
-      .setTitle("Queue Info")
-      .setThumbnail(currentTrack.thumbnail)
-      .addFields({
-        name: `⏯ Skipping: ${currentTrack.title}`,
-        value: `${currentTrack.title} ➡️ ${
-          skipToTrack ? skipToTrack.title : "End of track"
-        }`,
-        name: "Voted started by",
-        value: `${memberName}`,
-        value: `${totalVoteCount} out of ${minVoteCount}`,
-        inline: true,
-      });
+		// If not enough vote then return to wait
+		if (totalVoteCount < minVoteCount) {
+			return;
+		}
 
-    interaction.reply({ embeds: [embed] });
+		const queueSize = queue.tracks.data.length;
+		const skipToTrack = queue.tracks.data[0]; // the next track object
+		const currentTrack = queue.currentTrack;
 
-    // // Can't skip last song
-    if (queueSize == 1) {
-      const embed = new EmbedBuilder()
-        .setColor(hexColors.gold)
-        .setTitle("Queue Info")
-        .addFields({
-          value: "You can't skip the last song >:(",
-          inline: true,
-        });
+		if (queueSize == 0) {
+			queue.node.stop();
+			const embed = new EmbedBuilder()
+				.setColor(hexColors.gold)
+				.setTitle('Queue Info')
+				.setThumbnail(currentTrack.thumbnail)
+				.addFields(
+					{
+						name: `⏯ Skipping: ${currentTrack.title}`,
+						value: `${currentTrack.title} ➡️ ${skipToTrack ? skipToTrack.title : 'End of track'}`,
+					},
+					{
+						name: 'Vote started by',
+						value: `${memberName}`,
+						inline: true,
+					},
+					{
+						name: 'Votes',
+						value: `${totalVoteCount} out of ${minVoteCount}`,
+						inline: true,
+					},
+				);
 
-      return interaction.reply({ embeds: [embed] });
-    }
+			votedMemberIds.clear(); // Clear the voted member ids set
+		  return interaction.reply({ embeds: [embed] });
+		}
 
-    // // Set the flags to prevent finish event to emit
-    queue.metadata = {
-      ...queue.metadata,
-      finishEvent: false,
-    };
+		// Set the flags to prevent finish event to emit
+		queue.metadata = {
+			...queue.metadata,
+			finishEvent: false,
+		};
 
-    if (totalVoteCount == minVoteCount) {
-      queue.node.skip();
-      votedMemberId.clear();
-    }
-  },
+		queue.node.skip(); // Skip track
+		votedMemberIds.clear(); // Clear the voted member ids set
+
+		const embed = new EmbedBuilder()
+			.setColor(hexColors.gold)
+			.setTitle('Queue Info')
+			.setThumbnail(currentTrack.thumbnail)
+			.addFields(
+				{
+					name: `⏯ Skipping: ${currentTrack.title}`,
+					value: `${currentTrack.title} ➡️ ${skipToTrack ? skipToTrack.title : 'End of track'}`,
+				},
+				{
+					name: 'Vote started by',
+					value: `${memberName}`,
+					inline: true,
+				},
+				{
+					name: 'Votes',
+					value: `${totalVoteCount} out of ${minVoteCount}`,
+					inline: true,
+				},
+			);
+
+		interaction.reply({ embeds: [embed] });
+	},
 };
