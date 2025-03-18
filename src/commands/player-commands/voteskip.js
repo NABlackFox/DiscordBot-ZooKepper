@@ -81,42 +81,6 @@ module.exports = {
 		const skipToTrack = queue.tracks.data[0]; // the next track object
 		const currentTrack = queue.currentTrack;
 
-		if (queueSize == 0) {
-			queue.node.stop();
-			const embed = new EmbedBuilder()
-				.setColor(hexColors.gold)
-				.setTitle('Queue Info')
-				.setThumbnail(currentTrack.thumbnail)
-				.addFields(
-					{
-						name: `⏯ Skipping: ${currentTrack.title}`,
-						value: `${currentTrack.title} ➡️ ${skipToTrack ? skipToTrack.title : 'End of track'}`,
-					},
-					{
-						name: 'Vote started by',
-						value: `${memberName}`,
-						inline: true,
-					},
-					{
-						name: 'Votes',
-						value: `${totalVoteCount} out of ${minVoteCount}`,
-						inline: true,
-					},
-				);
-
-			votedMemberIds.clear(); // Clear the voted member ids set
-		  return interaction.reply({ embeds: [embed] });
-		}
-
-		// Set the flags to prevent finish event to emit
-		queue.metadata = {
-			...queue.metadata,
-			finishEvent: false,
-		};
-
-		queue.node.skip(); // Skip track
-		votedMemberIds.clear(); // Clear the voted member ids set
-
 		const embed = new EmbedBuilder()
 			.setColor(hexColors.gold)
 			.setTitle('Queue Info')
@@ -137,6 +101,21 @@ module.exports = {
 					inline: true,
 				},
 			);
+
+		if (queueSize == 0) {
+			queue.node.stop();
+			votedMemberIds.clear(); // Clear the voted member ids set
+		  return interaction.reply({ embeds: [embed] });
+		}
+
+		// Set the flags to prevent finish event to emit
+		queue.metadata = {
+			...queue.metadata,
+			finishEvent: false,
+		};
+
+		queue.node.skip(); // Skip track
+		votedMemberIds.clear(); // Clear the voted member ids set
 
 		interaction.reply({ embeds: [embed] });
 	},
